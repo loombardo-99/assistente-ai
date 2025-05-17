@@ -9,16 +9,60 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            overscroll-behavior: none;
-            touch-action: manipulation;
-        }
-        html, body {
-            position: fixed;
-            width: 100vw;
             height: 100vh;
             overflow: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 5rem);
+            background-color: #f8fafc;
+            border-radius: 0.75rem;
+            box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.15), 0 3px 7px -2px rgba(0, 0, 0, 0.07);
+            max-width: 95%;
+            margin: 0 auto;
+            position: relative;
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+        }
+        .header {
+            background-color: #f0f0f0;
+            padding: 1.25rem;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
+        .chat-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            scroll-behavior: smooth;
+            min-height: 0;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            background: #fff;
+            position: sticky;
+            bottom: 0;
+            z-index: 2;
         }
         .message-box {
             border-radius: 0.75rem;
@@ -40,12 +84,6 @@
             align-self: flex-start;
             border-top-left-radius: 0.25rem;
             border-bottom-left-radius: 0.25rem;
-        }
-        .input-container {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            border-top: 1px solid #e5e7eb;
         }
         .text-input {
             flex: 1;
@@ -86,87 +124,61 @@
             box-shadow: none;
             transform: none;
         }
-        .chat-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            scroll-behavior: smooth;
-        }
-        .header {
-            background-color: #f0f0f0;
-            padding: 1.25rem;
-            text-align: center;
-            border-bottom: 1px solid #e5e7eb;
-            border-top-left-radius: 0.75rem;
-            border-top-right-radius: 0.75rem;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            background-color: #f8fafc;
-            border-radius: 0.75rem;
-            box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.15), 0 3px 7px -2px rgba(0, 0, 0, 0.07);
-            max-width: 95%;
-            margin: 0 auto;
-        }
-        @media (max-width: 768px) {
-            .container {
-                max-width: 100%;
-                margin: 0;
-                border-radius: 0;
-                box-shadow: none;
-            }
-        }
         .loading-indicator {
             align-self: center;
             margin-top: 1rem;
             font-size: 1.25rem;
             color: #6b7280;
         }
-          @media (max-width: 640px) {
+        @media (max-width: 768px) {
+            .container {
+            max-width: 100%;
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
+            }
+        }
+        @media (max-width: 640px) {
             .header {
-                padding: 0.75rem;
-                font-size: 1.1rem;
+            padding: 0.75rem;
+            font-size: 1.1rem;
             }
             .container {
-                padding: 0;
-                min-height: 100vh;
-                box-shadow: none;
-                border-radius: 0;
+            padding: 0;
+            min-height: 100vh;
+            box-shadow: none;
+            border-radius: 0;
             }
             .chat-container {
-                padding: 0.5rem;
-                font-size: 0.97rem;
+            padding: 0.5rem;
+            font-size: 0.97rem;
             }
             .message-box {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.97rem;
-                max-width: 98%;
-                margin-bottom: 0.5rem;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.97rem;
+            max-width: 98%;
+            margin-bottom: 0.5rem;
             }
             .input-container {
-                padding: 0.5rem;
+            padding: 0.5rem;
             }
             .text-input {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.97rem;
-                margin-right: 0.5rem;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.97rem;
+            margin-right: 0.5rem;
             }
             .send-button {
-                padding: 0.6rem 1.1rem;
-                font-size: 0.97rem;
+            padding: 0.6rem 1.1rem;
+            font-size: 0.97rem;
             }
             nav .max-w-7xl {
-                flex-direction: column;
-                gap: 0.5rem;
-                padding: 0.5rem 0.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0.5rem 0.5rem;
             }
             nav .flex.items-center.space-x-2 {
-                flex-wrap: wrap;
-                gap: 0.3rem;
+            flex-wrap: wrap;
+            gap: 0.3rem;
             }
         }
 

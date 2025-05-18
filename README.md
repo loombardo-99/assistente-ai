@@ -24,7 +24,10 @@ Escolha seu assistente: Ao iniciar, você pode escolher com qual dos nossos assi
 Comece a conversar: Digite sua pergunta ou solicitação e deixe o assistente te ajudar!        
 📸 Em Funcionamento
 Aqui você pode ver algumas imagens do nosso chat interativo em ação:
+![Captura de tela 2025-05-18 093834](https://github.com/user-attachments/assets/638a74af-2bd7-4dd6-bc67-f2f3d895604d)
+![Captura de tela 2025-05-18 093538](https://github.com/user-attachments/assets/b1606256-92a9-4517-8cf7-f470180d42c7)
 
+![Captura de tela 2025-05-18 093953](https://github.com/user-attachments/assets/920b10e3-9227-45a4-ac45-4724289ab7d0)
 
 🤝 Contribuição
 Se você tem ideias ou quer contribuir para o projeto, sinta-se à vontade para abrir uma issue ou enviar um pull request. Toda ajuda é bem-vinda!

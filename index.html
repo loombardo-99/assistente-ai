@@ -1,331 +1,268 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Colab Interativo</title>
+    <title>Quiz: Descubra Seu Assistente Ideal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
         body {
             font-family: 'Inter', sans-serif;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
-            flex-direction: column;
-            height: calc(100vh - 5rem);
-            background-color: #f8fafc;
-            border-radius: 0.75rem;
-            box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.15), 0 3px 7px -2px rgba(0, 0, 0, 0.07);
-            max-width: 95%;
-            margin: 0 auto;
-            position: relative;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 16px; /* Adiciona padding para evitar que o conteúdo toque as bordas em telas pequenas */
         }
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .quiz-container {
+            background-color: rgba(255, 255, 255, 0.95); /* Ligeiramente translúcido */
+            padding: 24px; /* Reduzido para telas menores */
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             width: 100%;
-            z-index: 10;
-        }
-        .header {
-            background-color: #f0f0f0;
-            padding: 1.25rem;
+            max-width: 600px;
             text-align: center;
-            border-bottom: 1px solid #e5e7eb;
-            border-top-left-radius: 0.75rem;
-            border-top-right-radius: 0.75rem;
+            overflow: hidden; /* Para transições suaves */
+            transition: all 0.5s ease-in-out;
         }
-        .chat-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            scroll-behavior: smooth;
-            min-height: 0;
+        .screen {
+            display: none; /* Esconde todas as telas por padrão */
+            animation: fadeIn 0.7s ease-in-out;
         }
-        .input-container {
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-block; /* Para botões de tamanho adequado */
+            margin-top: 16px;
+        }
+        .btn-primary {
+            background-color: #5a67d8; /* Indigo */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4c51bf;
+        }
+        .option-btn {
+            background-color: #edf2f7; /* Gray 200 */
+            color: #2d3748; /* Gray 800 */
+            border: 1px solid #cbd5e0; /* Gray 400 */
+            width: 100%;
+            text-align: left;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            padding: 1rem;
-            border-top: 1px solid #e5e7eb;
-            background: #fff;
-            position: sticky;
-            bottom: 0;
-            z-index: 2;
+            padding: 16px;
+            font-size: 1rem; /* Ajustado para melhor leitura */
         }
-        .message-box {
-            border-radius: 0.75rem;
-            padding: 0.75rem 1.25rem;
-            margin-bottom: 0.75rem;
-            max-width: 85%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        .option-btn:hover {
+            background-color: #e2e8f0; /* Gray 300 */
+            border-color: #a0aec0; /* Gray 500 */
         }
-        .user-message {
-            background-color: #dcf8c6;
-            color: #1c5e13;
-            align-self: flex-end;
-            border-top-right-radius: 0.25rem;
-            border-bottom-right-radius: 0.25rem;
+        .option-btn.selected {
+            background-color: #c3dafe; /* Blue 200 */
+            border-color: #667eea; /* Indigo */
+            color: #2c5282; /* Blue 800 */
         }
-        .bot-message {
-            background-color: #f0f0f0;
-            color: #111827;
-            align-self: flex-start;
-            border-top-left-radius: 0.25rem;
-            border-bottom-left-radius: 0.25rem;
+        .option-icon {
+            font-size: 1.8rem; /* Aumentado para destaque */
+            margin-right: 16px;
+            width: 30px; /* Largura fixa para alinhamento */
+            text-align: center;
         }
-        .text-input {
-            flex: 1;
-            border-radius: 0.75rem;
-            padding: 0.8rem 1.25rem;
-            margin-right: 0.75rem;
-            border: 1px solid #e5e7eb;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        .result-icon {
+            font-size: 4rem; /* Aumentado para destaque */
+            margin-bottom: 16px;
+            color: #5a67d8;
         }
-        .text-input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-        .send-button {
-            background-color: #3b82f6;
-            color: white;
-            border-radius: 0.75rem;
-            padding: 0.8rem 1.75rem;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-            border: none;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .send-button:hover {
-            background-color: #2563eb;
-            transform: translateY(-1px);
-        }
-        .send-button:active {
-            background-color: #1e40af;
-            transform: translateY(0);
-        }
-        .send-button:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-        .loading-indicator {
-            align-self: center;
-            margin-top: 1rem;
-            font-size: 1.25rem;
-            color: #6b7280;
-        }
-        @media (max-width: 768px) {
-            .container {
-            max-width: 100%;
-            margin: 0;
-            border-radius: 0;
-            box-shadow: none;
+
+        /* Responsividade */
+        @media (min-width: 640px) { /* sm breakpoint de Tailwind */
+            .quiz-container {
+                padding: 32px 48px;
             }
-        }
-        @media (max-width: 640px) {
-            .header {
-            padding: 0.75rem;
-            font-size: 1.1rem;
-            }
-            .container {
-            padding: 0;
-            min-height: 100vh;
-            box-shadow: none;
-            border-radius: 0;
-            }
-            .chat-container {
-            padding: 0.5rem;
-            font-size: 0.97rem;
-            }
-            .message-box {
-            padding: 0.6rem 0.8rem;
-            font-size: 0.97rem;
-            max-width: 98%;
-            margin-bottom: 0.5rem;
-            }
-            .input-container {
-            padding: 0.5rem;
-            }
-            .text-input {
-            padding: 0.6rem 0.8rem;
-            font-size: 0.97rem;
-            margin-right: 0.5rem;
-            }
-            .send-button {
-            padding: 0.6rem 1.1rem;
-            font-size: 0.97rem;
-            }
-            nav .max-w-7xl {
-            flex-direction: column;
-            gap: 0.5rem;
-            padding: 0.5rem 0.5rem;
-            }
-            nav .flex.items-center.space-x-2 {
-            flex-wrap: wrap;
-            gap: 0.3rem;
+            .option-btn {
+                font-size: 1.125rem; /* lg */
             }
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <nav class="w-full bg-white shadow mb-4 fixed top-0 left-0 z-10">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                <span class="font-bold text-lg text-blue-700">Assistente AI</span>
-            </div>
-            <div class="flex items-center space-x-2">
-                <a href="index.html" class="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-medium hover:bg-blue-200 transition">Bíblico</a>
-                <a href="chat-saude.html" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition">Saúde</a>
-                <a href="chat-financeiro.html" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition">Financeiro</a>
-                <a href="chat-estudos.html" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition">Estudos</a>
-            </div>
+<body>
+    <div class="quiz-container">
+        <div id="initial-screen" class="screen active">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-3">Descubra Seu Assistente Ideal 🤖✨</h1>
+            <p class="text-gray-600 mb-8 text-base sm:text-lg">Responda a uma pergunta rápida para encontrarmos o assistente perfeito para suas necessidades.</p>
+            <button id="start-quiz-btn" class="btn btn-primary text-lg">Começar Quiz</button>
         </div>
-    </nav>
-    <div class="h-20"></div>
-    <div class="container">
-        <div class="header">           
-        </div><br><br>
-        <br>
-          <div class="w-full bg-blue-50 border-b border-blue-200 p-4 rounded-t-lg sticky top-0 z-10 flex items-center gap-3">
-            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <span class="text-blue-800 font-medium">
-            Olá! Eu sou o Palavra Amiga, seu ouvinte. Estou aqui para te oferecer conforto e orientação com a sabedoria bíblica.
-            </span>
+
+        <div id="quiz-screen" class="screen">
+            <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6">O que mais te interessa explorar ou resolver neste momento?</h2>
+            <div id="options-container">
+                </div>
+            <button id="next-question-btn" class="btn btn-primary mt-4" style="display: none;">Ver Resultado</button>
         </div>
-        <div id="chat-container" class="chat-container">
-            </div>
-        <div class="input-container">
-            <input type="text" id="text-input" class="text-input" placeholder="Digite sua mensagem...">
-            <button id="send-button" class="send-button" disabled>Enviar</button>
+
+        <div id="result-screen" class="screen">
+            <div id="result-icon-container" class="result-icon">
+                </div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">Seu assistente ideal é o <span id="agent-name" class="text-indigo-600"></span>!</h2>
+            <p id="agent-description" class="text-gray-700 mb-6 text-base sm:text-lg"></p>
+            <button id="start-agent-btn" class="btn btn-primary text-lg">Conversar com o Agente</button>
+            <button id="restart-quiz-btn" class="btn bg-gray-300 text-gray-700 hover:bg-gray-400 ml-2">Refazer Quiz</button>
         </div>
     </div>
 
     <script>
-        const chatContainer = document.getElementById('chat-container');
-        const textInput = document.getElementById('text-input');
-        const sendButton = document.getElementById('send-button');
-        const apiKey = ''; // Substitua pela sua chave da API
-        const modelName = 'gemini-2.0-flash';
-        let chatHistory = [];
+        // Definições dos Agentes e Perguntas
+        const agents = {
+            biblico: {
+                name: "Agente Bíblico",
+                icon: "🙏",
+                description: "Explore a sabedoria milenar, encontre conforto e orientação nas escrituras sagradas.",
+                keywords: ["espiritual", "fé", "escrituras"],
+                chatFile: "chat-biblico.html" // Arquivo HTML correspondente
+            },
+            saude: {
+                name: "Agente de Saúde",
+                icon: "🩺",
+                description: "Seu companheiro para uma vida mais saudável, com informações confiáveis e dicas personalizadas.",
+                keywords: ["bem-estar", "saudável", "corpo"],
+                chatFile: "chat-saude.html" // Arquivo HTML correspondente
+            },
+            financeiro: {
+                name: "Agente Financeiro",
+                icon: "💸",
+                description: "Navegue pelo mundo das finanças com clareza e tome decisões que impulsionam seus objetivos.",
+                keywords: ["finanças", "investimentos", "planejamento"],
+                chatFile: "chat-financeiro.html" // Arquivo HTML correspondente
+            },
+            estudo: {
+                name: "Agente de Estudo",
+                icon: "📚",
+                description: "Potencialize seu aprendizado, desvende novos conceitos e alcance suas metas acadêmicas.",
+                keywords: ["aprender", "pesquisas", "conhecimento"],
+                chatFile: "chat-estudos.html" // Arquivo HTML correspondente
+            }
+        };
 
-        function addMessage(message, type) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message-box');
-            messageElement.classList.add(type);
-            messageElement.textContent = message;
-            chatContainer.appendChild(messageElement);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+        const quizData = [
+            {
+                question: "O que mais te interessa explorar ou resolver neste momento?",
+                options: [
+                    { text: "Busco inspiração, reflexão e entendimento sobre questões espirituais e textos sagrados.", agentKey: "biblico", icon: "🙏" },
+                    { text: "Quero informações confiáveis sobre bem-estar, dicas de saúde e hábitos saudáveis.", agentKey: "saude", icon: "🩺" },
+                    { text: "Preciso de orientação sobre finanças pessoais, investimentos ou planejamento financeiro.", agentKey: "financeiro", icon: "💸" },
+                    { text: "Estou focado em aprender algo novo, preciso de ajuda com estudos ou pesquisas.", agentKey: "estudo", icon: "📚" }
+                ]
+            }
+            // Futuras perguntas podem ser adicionadas aqui
+        ];
+
+        let currentQuestionIndex = 0;
+        let selectedAgentKey = null;
+
+        // Elementos do DOM
+        const initialScreen = document.getElementById('initial-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const optionsContainer = document.getElementById('options-container');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+        
+        const resultIconContainer = document.getElementById('result-icon-container');
+        const agentNameSpan = document.getElementById('agent-name');
+        const agentDescriptionP = document.getElementById('agent-description');
+        const startAgentBtn = document.getElementById('start-agent-btn');
+        const restartQuizBtn = document.getElementById('restart-quiz-btn');
+
+        // Função para trocar de tela
+        function showScreen(screenElement) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            screenElement.classList.add('active');
         }
 
-        textInput.addEventListener('input', () => {
-            sendButton.disabled = !textInput.value.trim();
-        });
+        // Função para carregar a pergunta atual
+        function loadQuestion() {
+            const questionData = quizData[currentQuestionIndex];
+            
+            optionsContainer.innerHTML = ''; 
+            selectedAgentKey = null; 
+            nextQuestionBtn.style.display = 'none'; 
 
-        sendButton.addEventListener('click', () => {
-            const message = textInput.value.trim();
-            if (message) {
-                addMessage(message, 'user-message');
-                chatHistory.push({ role: 'user', parts: [{ text: message }] });
-                textInput.value = '';
-                sendButton.disabled = true;
-                enviarMensagemParaGemini(chatHistory);
-            }
-        });
-
-        textInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' && !event.shiftKey && !sendButton.disabled) {
-                sendButton.click();
-                event.preventDefault();
-            }
-        });
-
-        async function enviarMensagemParaGemini(history) {
-            const loadingIndicator = document.createElement('div');
-            loadingIndicator.classList.add('loading-indicator');
-            loadingIndicator.textContent = 'Carregando...';
-            chatContainer.appendChild(loadingIndicator);
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        contents: history,
-                    }),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Erro na solicitação da API Gemini: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                const botResponse = data.candidates[0].content.parts[0].text;
-                const bibliaResponse = await getBiblicalMessage(history, botResponse);
-                addMessage(bibliaResponse, 'bot-message');
-                chatHistory.push({ role: 'model', parts: [{ text: bibliaResponse }] });
-            } catch (error) {
-                console.error('Erro ao enviar mensagem para Gemini:', error);
-                addMessage('Ocorreu um erro ao obter a resposta do modelo.', 'bot-message');
-            } finally {
-                chatContainer.removeChild(loadingIndicator);
-            }
+            questionData.options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn');
+                button.innerHTML = `<span class="option-icon">${option.icon}</span> <span class="flex-1">${option.text}</span>`;
+                button.onclick = () => selectOption(button, option.agentKey);
+                optionsContainer.appendChild(button);
+            });
         }
 
-        async function getBiblicalMessage(history, botResponse) {
-        const prompt = `Você é o "Palavra Amiga", um ouvinte acolhedor e especialista em sabedoria bíblica. Seu foco é oferecer conforto e orientação com um versículo relevante e sua aplicação simples. Ao final, pergunte como aprofundar a conversa ou se disponibilize.
-        Histórico da Conversa:
-        ${JSON.stringify(history)}
-
-        Resposta do Modelo:
-        ${botResponse}
-
-        Forneça uma resposta com no máximo 150 palavras,`;
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: prompt }],
-                        }],
-                    }),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Erro ao obter mensagem bíblica: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                const mensagem = data.candidates[0].content.parts[0].text;
-                return mensagem;
-            } catch (error) {
-                console.error('Erro ao obter mensagem bíblica:', error);
-                return "Que Deus te abençoe e te dê forças.";
-            }
+        // Função para lidar com a seleção de uma opção
+        function selectOption(buttonElement, agentKey) {
+            optionsContainer.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            buttonElement.classList.add('selected');
+            selectedAgentKey = agentKey;
+            nextQuestionBtn.style.display = 'inline-block'; 
         }
+
+        // Função para mostrar o resultado
+        function showResult() {
+            if (!selectedAgentKey) {
+                console.error("Nenhuma opção selecionada!");
+                // Aqui você pode adicionar uma mensagem de erro customizada para o usuário, se desejar.
+                // Por exemplo, um pequeno modal ou uma mensagem abaixo do botão.
+                // Para simplificar, não adicionarei um modal complexo agora.
+                // Uma simples mensagem no console ou um alerta (não recomendado para produção final)
+                // alert("Por favor, selecione uma opção."); // Evitar alert em produção
+                return;
+            }
+
+            const agent = agents[selectedAgentKey];
+            resultIconContainer.textContent = agent.icon;
+            agentNameSpan.textContent = agent.name;
+            agentDescriptionP.textContent = agent.description;
+            showScreen(resultScreen);
+        }
+
+        // Event Listeners
+        startQuizBtn.addEventListener('click', () => {
+            showScreen(quizScreen);
+            loadQuestion();
+        });
+
+        nextQuestionBtn.addEventListener('click', () => {
+            showResult();
+        });
+        
+        startAgentBtn.addEventListener('click', () => {
+            if (selectedAgentKey && agents[selectedAgentKey] && agents[selectedAgentKey].chatFile) {
+                window.location.href = agents[selectedAgentKey].chatFile;
+            } else {
+                console.error("Não foi possível encontrar o arquivo de chat para o agente selecionado.");
+                // Adicionar feedback para o usuário aqui também, se necessário
+            }
+        });
+
+        restartQuizBtn.addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            selectedAgentKey = null;
+            showScreen(initialScreen);
+        });
+
     </script>
 </body>
 </html>
